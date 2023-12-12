@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+option go_package = "gRPCService/classInfoProto";
+
+service ClassInfoService {
+  // Create ClassInfo
+  rpc AddClass (ClassAddRequest) returns (ClassAddResponse){
+    option (google.api.http) = {
+      post: "/v1/class_info"
+      body: "*"
+    };
+  }
+  // Update ClassInfo
+  rpc UpdateClass (ClassUpdateRequest) returns (ClassUpdateResponse){
+    option (google.api.http) = {
+      put: "/v1/class_info"
+      body: "*"
+    };
+  }
+  // Delete ClassInfo By Student
+  rpc DeleteClassByStudent (ClassDeleteRequest) returns (ClassDeleteResponse){
+    option (google.api.http) = {
+      delete: "/v1/class_info/{studentID}"
+    };
+  }
+  // Get All ClassesByStudent
+  rpc GetAllClassesByStudent (ClassesGetRequest) returns (ClassesGetResponse){
+    option (google.api.http) = {
+      get: "/v1/class_info/{studentID}"
+    };
+  }
+}
+
+// ClassInfo
+message ClassInfo {
+  int64 id = 1;
+  int64 studentID = 2;
+  string className = 3;
+}
+message ClassAddRequest {
+  int64 studentID = 1;
+  string className = 2;
+}
+message ClassAddResponse{
+  ClassInfo classInfo = 1;
+  string message = 2;
+}
+
+message ClassUpdateRequest{
+  int64 studentID = 1;
+  string className = 2;
+}
+message ClassUpdateResponse{
+  string message = 1;
+}
+
+message ClassDeleteRequest{
+  int64 studentID = 1;
+}
+message ClassDeleteResponse{
+  string message = 1;
+}
+message ClassesGetRequest{
+  int64 studentID = 1;
+}
+message ClassesGetResponse{
+  repeated ClassInfo classInfo = 1;
+  string message = 2;
+}

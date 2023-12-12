@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+option go_package = "gRPCService/studentProto";
+
+//protoc --go_out=. --go-grpc_out=. name_of_proto_you_created.proto
+service StudentService{
+  // Create Student Info
+  rpc CreateStudent(StudentCreateRequest) returns (StudentCreateResponse){
+    option (google.api.http) = {
+      post: "/v1/student"
+      body: "*"
+    };
+  }
+  // Get Student Info
+  rpc GetStudent(StudentGetRequest) returns (StudentGetResponse){
+    option (google.api.http) = {
+      get: "/v1/student/{studentID}"
+    };
+  }
+  // Update Student Info
+  rpc UpdateStudent(StudentUpdateRequest) returns (StudentUpdateResponse){
+    option (google.api.http) = {
+      put: "/v1/student"
+      body: "*"
+    };
+  }
+  // Delete Student Info
+  rpc DeleteStudent(StudentDeleteRequest) returns (StudentDeleteResponse){
+    option (google.api.http) = {
+      delete: "/v1/student/{studentID}"
+    };
+  }
+}
+// Student
+message Student{
+  int64 studentID = 1;
+  string studentName = 2;
+  int64 grade = 3;
+}
+message StudentCreateRequest {
+  string studentName = 1;
+  int64 grade = 2;
+}
+message StudentCreateResponse{
+  Student student = 1;
+  string message = 2;
+}
+
+message StudentGetRequest{
+  int64 studentID = 1;
+}
+message StudentGetResponse{
+  Student student = 1;
+  string message = 2;
+}
+
+message StudentUpdateRequest{
+  int64 studentID = 1;
+  string studentName = 2;
+  int64 grade = 3;
+}
+message StudentUpdateResponse{
+  string message = 1;
+}
+
+message StudentDeleteRequest{
+  int64 studentID = 1;
+}
+message StudentDeleteResponse{
+  string message = 1;
+}
