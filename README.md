@@ -3,6 +3,7 @@
 GRPC Server is a Go application that integrates a gRPC (Google Remote Procedure Calls) server with Gateway for REST API, Kafka messaging, Jaeger distributed tracing, and the `zgo.uber.org/zap` logger.
 
 ## Table of Contents
+- [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -20,6 +21,17 @@ GRPC Server is a Go application that integrates a gRPC (Google Remote Procedure 
 - [Contributing](#contributing)
 - [License](#license)
 
+## Introduction
+
+The GRPC Server is a Go application that provides a gRPC server with a REST API gateway, Kafka messaging, Jaeger distributed tracing, and the zgo.uber.org/zap logger. It allows you to build scalable and high-performance server applications using the gRPC framework while also providing REST API compatibility. Kafka messaging enables asynchronous communication and decoupling of components, and Jaeger distributed tracing helps monitor and identify performance issues in a distributed system. The zgo.uber.org/zap logger ensures efficient logging with minimal impact on performance.
+
+## Prerequisites
+
+Before running this application, ensure that you have the following prerequisites installed:
+
+- Go: [Install Go](https://go.dev/doc/install/)
+- Docker: [Install Docker](https://docs.docker.com/get-docker/)
+- Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Installation
 
@@ -110,12 +122,13 @@ For detailed API documentation, including examples, request/response structures,
 
 ## Distributed Tracing with Jaeger
 
-This project integrates with Jaeger for distributed tracing. Jaeger allows you to trace the flow of requests across multiple services, providing insights into performance andidentifying bottlenecks in the system.
-You can access the Jaeger UI to view the traces:
+This project integrates with Jaeger for distributed tracing. Jaeger allows you to trace the flow of requests across multiple services, providing insights into performance and identifying bottlenecks in the system.
+
+To view the traces, access the Jaeger UI at:
 ```
 http://localhost:16686/
 ```
-For more detailed information on how to use Jaeger for distributed tracing in Go, refer to the Jaeger Go client documentation.
+For more information on how to use Jaeger for distributed tracing in Go, refer to the Jaeger Go client documentation.
 
 ## Linting and Code Quality
 
@@ -131,6 +144,7 @@ To install `golangci-lint`, you can use `brew`:
 
 ### Linting Usage
 
+1. Run the linter:
 Once installed, you can run golangci-lint on your project by executing the following command at the root directory of your project:
 
 ```bash
@@ -138,6 +152,10 @@ Once installed, you can run golangci-lint on your project by executing the follo
 ```
 This command performs linting checks on your entire project and provides a detailed report highlighting any issues or violations found.
 
+2. Customize Linting Rules:
+You can customize the linting rules by modifying the .golangci.yml file.
+
+For more information on using golangci-lint, refer to the golangci-lint documentation.
 
 ## Testing
 
@@ -152,7 +170,15 @@ This command performs linting checks on your entire project and provides a detai
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+Contributions are welcome! If you would like to contribute to this project, please follow these steps:
+1. Fork the repository.
+2. Create a new branch for your feature/fix:
+3. Make your changes and commit them.
+```bash
+  git checkout -b feature/your-feature-name
+```
+4. Push your branch to your forked repository.
+5. Create a pull request from your branch to the main repository.
 
 ## License
 
