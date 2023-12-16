@@ -117,7 +117,7 @@ func main() {
 	studentStorage := repository.NewStudentStorage(database)
 	classInfoStorage := repository.NewClassInfoStorage(database)
 
-	go server.StartGatewayRouter(ctx, "localhost"+grpcPort, httpPort)
+	go server.StartGatewayRouter(ctx, grpcPort, httpPort)
 
 	logger.Infof(ctx, "Starting gRPC server on port %s", grpcPort)
 

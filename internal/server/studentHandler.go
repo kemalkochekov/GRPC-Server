@@ -10,6 +10,7 @@ import (
 	"GRPC_Server/proto/gRPCService/studentProto"
 	"context"
 	"errors"
+	"github.com/golang/protobuf/ptypes/empty"
 	"time"
 
 	"github.com/opentracing/opentracing-go"
@@ -30,6 +31,14 @@ func NewStudentServer(studentStorage repository.StudentPgRepo, producer kafka.Pr
 		studentRepo: studentStorage,
 		producer:    producer,
 	}
+}
+func (s *StudentServer) Main(ctx context.Context, req *empty.Empty) (*studentProto.MainResponse, error) {
+	loggerGateway := logger.FromContext(ctx)
+	ctx = logger.ToContext(ctx, loggerGateway.With(zap.String("method", "Main")))
+	span, ctx := opentracing.StartSpanFromContext(ctx, "Main")
+	defer span.Finish()
+
+	return &studentProto.MainResponse{Message: "Welcome TO GPRC SERVER"}, nil
 }
 
 // curl -X POST localhost:9000/student -d '{"student_name":"test","grade":1}' -i

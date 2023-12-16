@@ -21,7 +21,7 @@ func NewProducer(brokers []string, topic string) (*Producer, error) {
 	config.Producer.Retry.Max = 2
 	// waits message delivered
 	config.Producer.Return.Successes = true
-
+	fmt.Println(brokers)
 	// Create the Kafka Producer
 	syncProducer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {

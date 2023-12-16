@@ -20,6 +20,7 @@ type Consumer struct {
 func NewKafkaConsumer(brokers []string, message io.Writer) (*Consumer, error) {
 	config := sarama.NewConfig()
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	fmt.Println(brokers)
 	consumer, err := sarama.NewConsumer(brokers, config)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to open kafka consumer")

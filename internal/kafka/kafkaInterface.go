@@ -7,7 +7,7 @@ import (
 )
 
 type ProducerInterface interface {
-	SendMessage(topic string, kakfaRequestMessage kafkaEntities.Message) error
+	SendMessage(topic string, kafkaRequestMessage kafkaEntities.Message) error
 	Close() error
 	Topic() string
 }

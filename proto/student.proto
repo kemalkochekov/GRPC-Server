@@ -1,10 +1,16 @@
 syntax = "proto3";
 
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 option go_package = "gRPCService/studentProto";
 
 //protoc --go_out=. --go-grpc_out=. name_of_proto_you_created.proto
 service StudentService{
+  rpc Main(google.protobuf.Empty) returns (MainResponse){
+    option (google.api.http) = {
+      get: "/v1"
+    };
+  }
   // Create Student Info
   rpc CreateStudent(StudentCreateRequest) returns (StudentCreateResponse){
     option (google.api.http) = {
@@ -31,6 +37,10 @@ service StudentService{
       delete: "/v1/student/{studentID}"
     };
   }
+}
+
+message MainResponse{
+  string message =1;
 }
 // Student
 message Student{

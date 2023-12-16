@@ -122,7 +122,7 @@ func TestStudentHandler_Get(t *testing.T) {
 func TestStudentHandler_Create(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentName:\"Test\" grade:90", RequestType: "/StudentService/CreateStudent", Timestamp: time.Now().Round(time.Minute)}
+		request = kafkaEntities.Message{Request: "studentName:\"Test\"  grade:90", RequestType: "/StudentService/CreateStudent", Timestamp: time.Now().Round(time.Minute)}
 		topic   = "CRUD_events"
 	)
 	zapLogger, err := zap.NewProduction()

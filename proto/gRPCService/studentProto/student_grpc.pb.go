@@ -8,10 +8,10 @@ package studentProto
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	StudentService_Main_FullMethodName          = "/StudentService/Main"
 	StudentService_CreateStudent_FullMethodName = "/StudentService/CreateStudent"
 	StudentService_GetStudent_FullMethodName    = "/StudentService/GetStudent"
 	StudentService_UpdateStudent_FullMethodName = "/StudentService/UpdateStudent"
@@ -30,6 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StudentServiceClient interface {
+	Main(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MainResponse, error)
 	// Create Student Info
 	CreateStudent(ctx context.Context, in *StudentCreateRequest, opts ...grpc.CallOption) (*StudentCreateResponse, error)
 	// Get Student Info
@@ -46,6 +48,15 @@ type studentServiceClient struct {
 
 func NewStudentServiceClient(cc grpc.ClientConnInterface) StudentServiceClient {
 	return &studentServiceClient{cc}
+}
+
+func (c *studentServiceClient) Main(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MainResponse, error) {
+	out := new(MainResponse)
+	err := c.cc.Invoke(ctx, StudentService_Main_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *studentServiceClient) CreateStudent(ctx context.Context, in *StudentCreateRequest, opts ...grpc.CallOption) (*StudentCreateResponse, error) {
@@ -88,6 +99,7 @@ func (c *studentServiceClient) DeleteStudent(ctx context.Context, in *StudentDel
 // All implementations must embed UnimplementedStudentServiceServer
 // for forward compatibility
 type StudentServiceServer interface {
+	Main(context.Context, *emptypb.Empty) (*MainResponse, error)
 	// Create Student Info
 	CreateStudent(context.Context, *StudentCreateRequest) (*StudentCreateResponse, error)
 	// Get Student Info
@@ -103,6 +115,9 @@ type StudentServiceServer interface {
 type UnimplementedStudentServiceServer struct {
 }
 
+func (UnimplementedStudentServiceServer) Main(context.Context, *emptypb.Empty) (*MainResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Main not implemented")
+}
 func (UnimplementedStudentServiceServer) CreateStudent(context.Context, *StudentCreateRequest) (*StudentCreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateStudent not implemented")
 }
@@ -126,6 +141,24 @@ type UnsafeStudentServiceServer interface {
 
 func RegisterStudentServiceServer(s grpc.ServiceRegistrar, srv StudentServiceServer) {
 	s.RegisterService(&StudentService_ServiceDesc, srv)
+}
+
+func _StudentService_Main_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StudentServiceServer).Main(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StudentService_Main_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StudentServiceServer).Main(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _StudentService_CreateStudent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -207,6 +240,10 @@ var StudentService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "StudentService",
 	HandlerType: (*StudentServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Main",
+			Handler:    _StudentService_Main_Handler,
+		},
 		{
 			MethodName: "CreateStudent",
 			Handler:    _StudentService_CreateStudent_Handler,

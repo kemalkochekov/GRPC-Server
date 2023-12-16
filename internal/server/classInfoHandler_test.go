@@ -29,7 +29,7 @@ import (
 func TestClassInfoHandler_AddClass(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentID:1 className:\"math\"", RequestType: "/ClassInfoService/AddClass", Timestamp: time.Now().Round(time.Minute)}
+		request = kafkaEntities.Message{Request: "studentID:1  className:\"math\"", RequestType: "/ClassInfoService/AddClass", Timestamp: time.Now().Round(time.Minute)}
 		topic   = "CRUD_events"
 	)
 	zapLogger, err := zap.NewProduction()

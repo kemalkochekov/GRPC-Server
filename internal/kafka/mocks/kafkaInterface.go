@@ -54,17 +54,17 @@ func (mr *MockProducerInterfaceMockRecorder) Close() *gomock.Call {
 }
 
 // SendMessage mocks base method.
-func (m *MockProducerInterface) SendMessage(topic string, kakfaRequestMessage kafkaEntities.Message) error {
+func (m *MockProducerInterface) SendMessage(topic string, kafkaRequestMessage kafkaEntities.Message) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendMessage", topic, kakfaRequestMessage)
+	ret := m.ctrl.Call(m, "SendMessage", topic, kafkaRequestMessage)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SendMessage indicates an expected call of SendMessage.
-func (mr *MockProducerInterfaceMockRecorder) SendMessage(topic, kakfaRequestMessage any) *gomock.Call {
+func (mr *MockProducerInterfaceMockRecorder) SendMessage(topic, kafkaRequestMessage any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessage", reflect.TypeOf((*MockProducerInterface)(nil).SendMessage), topic, kakfaRequestMessage)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendMessage", reflect.TypeOf((*MockProducerInterface)(nil).SendMessage), topic, kafkaRequestMessage)
 }
 
 // Topic mocks base method.
