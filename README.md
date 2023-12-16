@@ -1,6 +1,6 @@
 # GRPC Server
 
-GRPC Server is a Go application that integrates a gRPC server with Gateway for Rest api with Kafka messaging and Jaeger distributed tracing.
+GRPC Server is a Go application that integrates a gRPC (Google Remote Procedure Calls) server with Gateway for REST API, Kafka messaging, Jaeger distributed tracing, and the `zgo.uber.org/zap` logger.
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
@@ -12,6 +12,7 @@ GRPC Server is a Go application that integrates a gRPC server with Gateway for R
   - [Delete](#delete)
   - [Update](#update)
   - [Api Documentation](#api-documentation)
+- [Distributed Tracing with Jaeger](#distributed-tracing-with-jaeger)
 - [Linting and Code Quality](#linting-and-code-quality)
   - [Linting Installation](#linting-installation)
   - [Linting Usage](#linting-usage)
@@ -24,7 +25,7 @@ GRPC Server is a Go application that integrates a gRPC server with Gateway for R
 
 1. Clone this repository
   ```bash
-    https://github.com/kemalkochekov/GRPC-Server.git
+    git clone https://github.com/kemalkochekov/GRPC-Server.git
   ```
 2. Navigate to the project directory:
   ```
@@ -106,6 +107,15 @@ For detailed API documentation, including examples, request/response structures,
 <a href="https://documenter.getpostman.com/view/31073105/2s9Ykn8grK" target="_blank">
     <img alt="View API Doc Button" src="https://github.com/kemalkochekov/JWT-Backend-Development-App/assets/85355663/0c231cef-ee76-4cdf-bc41-e900845da493" width="200" height="60"/>
 </a>
+
+## Distributed Tracing with Jaeger
+
+This project integrates with Jaeger for distributed tracing. Jaeger allows you to trace the flow of requests across multiple services, providing insights into performance andidentifying bottlenecks in the system.
+You can access the Jaeger UI to view the traces:
+```
+http://localhost:16686/
+```
+For more detailed information on how to use Jaeger for distributed tracing in Go, refer to the Jaeger Go client documentation.
 
 ## Linting and Code Quality
 
