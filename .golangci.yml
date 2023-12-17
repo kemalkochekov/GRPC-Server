@@ -45,14 +45,6 @@
     - unparam
     - whitespace
     - wsl
-    # - wastedassign - запрещает делать short declare
-    # - gosec
-    # - funlen
-    # - gochecknoglobals
-    # - depguard
-    # - dupl
-    # - exhaustruct
-
 linters-settings:
   errcheck:
     check-type-assertions: true

@@ -93,7 +93,10 @@ func TestClassInfoHandler_AddClass(t *testing.T) {
 
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -185,7 +188,10 @@ func TestClassInfoHandler_GetAllClassesByStudent(t *testing.T) {
 
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -279,7 +285,10 @@ func TestClassInfoHandler_DeleteClassByStudent(t *testing.T) {
 			defer ctrl.Finish()
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -362,7 +371,10 @@ func TestClassInfoHandler_UpdateClass(t *testing.T) {
 			// act
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client

@@ -92,7 +92,10 @@ func TestStudentHandler_Get(t *testing.T) {
 			defer ctrl.Finish()
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -187,7 +190,10 @@ func TestStudentHandler_Create(t *testing.T) {
 			// act
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -282,7 +288,10 @@ func TestStudentHandler_Delete(t *testing.T) {
 
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
 			// Create a gRPC client
@@ -365,10 +374,13 @@ func TestStudentHandler_Update(t *testing.T) {
 			defer ctrl.Finish()
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
-			go grpcServer.Serve(lis)
+			go func() {
+				err := grpcServer.Serve(lis)
+				require.NoError(t, err)
+			}()
 			defer grpcServer.Stop()
 
-			// Create a gRPC client
+			//Create a gRPC client
 			conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 			require.NoError(t, err)
 			defer conn.Close()

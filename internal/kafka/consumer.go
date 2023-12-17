@@ -55,7 +55,11 @@ func (c *Consumer) ReadMessages(ctx context.Context, topic string) error {
 							continue
 						}
 						messageString := fmt.Sprintf("Received Kafka Message: RequestType: %s, Request: %s, Timestamp: %v\n", message.RequestType, message.Request, message.Timestamp)
-						c.messages.Write([]byte(messageString))
+						_, err := c.messages.Write([]byte(messageString))
+						if err != nil {
+							log.Printf("Failed to Write Kafka message: %v", err)
+							continue
+						}
 					}
 				case <-ctx.Done():
 					{

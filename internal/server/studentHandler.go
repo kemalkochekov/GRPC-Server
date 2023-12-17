@@ -35,7 +35,7 @@ func NewStudentServer(studentStorage repository.StudentPgRepo, producer kafka.Pr
 func (s *StudentServer) Main(ctx context.Context, req *empty.Empty) (*studentProto.MainResponse, error) {
 	loggerGateway := logger.FromContext(ctx)
 	ctx = logger.ToContext(ctx, loggerGateway.With(zap.String("method", "Main")))
-	span, ctx := opentracing.StartSpanFromContext(ctx, "Main")
+	span, _ := opentracing.StartSpanFromContext(ctx, "Main")
 	defer span.Finish()
 
 	return &studentProto.MainResponse{Message: "Welcome TO GPRC SERVER"}, nil
