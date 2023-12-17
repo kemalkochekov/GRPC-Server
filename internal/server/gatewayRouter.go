@@ -21,10 +21,12 @@ func StartGatewayRouter(ctx context.Context, grpcServerEndpoint string, httpPort
 	mux := runtime.NewServeMux()
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+
 	err := studentProto.RegisterStudentServiceHandlerFromEndpoint(ctx, mux, grpcServerEndpoint, opts)
 	if err != nil {
 		logger.Fatalf(ctx, "Failed to register Student HTTP server: %v", err)
 	}
+
 	err = classInfoProto.RegisterClassInfoServiceHandlerFromEndpoint(ctx, mux, "localhost"+grpcServerEndpoint, opts)
 	if err != nil {
 		logger.Fatalf(ctx, "Failed to register ClassInfo HTTP server: %v", err)
@@ -32,6 +34,7 @@ func StartGatewayRouter(ctx context.Context, grpcServerEndpoint string, httpPort
 
 	// Start HTTP server (and proxy calls to gRPC server)
 	logger.Infof(ctx, "Starting HTTP server on port %v", httpPort)
+
 	if err := http.ListenAndServe(httpPort, mux); err != nil {
 		log.Fatalf("Failed to serve HTTP server over port %s: %v", httpPort, err)
 	}

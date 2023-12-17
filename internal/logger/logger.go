@@ -20,6 +20,7 @@ func FromContext(ctx context.Context) *zap.Logger {
 	if logger, ok := ctx.Value(ctxKey{}).(*zap.Logger); ok {
 		return logger
 	}
+
 	return defaultLogger
 }
 

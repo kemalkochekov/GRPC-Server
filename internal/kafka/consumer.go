@@ -20,11 +20,12 @@ type Consumer struct {
 func NewKafkaConsumer(brokers []string, message io.Writer) (*Consumer, error) {
 	config := sarama.NewConfig()
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
-	fmt.Println(brokers)
+
 	consumer, err := sarama.NewConsumer(brokers, config)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to open kafka consumer")
 	}
+
 	return &Consumer{
 		consumer: consumer,
 		messages: message,
@@ -33,18 +34,23 @@ func NewKafkaConsumer(brokers []string, message io.Writer) (*Consumer, error) {
 func (c *Consumer) ReadMessages(ctx context.Context, topic string) error {
 	partitions, err := c.consumer.Partitions(topic)
 	if err != nil {
-		return fmt.Errorf("Failed to open partitions %v", err)
+		return fmt.Errorf("Failed to open partitions %w", err)
 	}
 	var wg sync.WaitGroup
+
 	for _, partition := range partitions {
 		wg.Add(1)
+
 		go func(partition int32) {
 			defer wg.Done()
+
 			partitionConsumer, err := c.consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
 			if err != nil {
 				return
 			}
+
 			defer partitionConsumer.Close()
+
 			for {
 				select {
 				case msg := <-partitionConsumer.Messages():
@@ -54,7 +60,13 @@ func (c *Consumer) ReadMessages(ctx context.Context, topic string) error {
 							log.Printf("Failed to unmarshal Kafka message: %v", err)
 							continue
 						}
-						messageString := fmt.Sprintf("Received Kafka Message: RequestType: %s, Request: %s, Timestamp: %v\n", message.RequestType, message.Request, message.Timestamp)
+						messageString := fmt.Sprintf(
+							"Received Kafka Message: RequestType: %s, Request: %s, Timestamp: %v\n",
+							message.RequestType,
+							message.Request,
+							message.Timestamp,
+						)
+
 						_, err := c.messages.Write([]byte(messageString))
 						if err != nil {
 							log.Printf("Failed to Write Kafka message: %v", err)
@@ -70,7 +82,9 @@ func (c *Consumer) ReadMessages(ctx context.Context, topic string) error {
 			}
 		}(partition)
 	}
+
 	wg.Wait()
+
 	return fmt.Errorf("Consumer canceled")
 }
 func (c *Consumer) ConsumerClose() error {
@@ -78,5 +92,6 @@ func (c *Consumer) ConsumerClose() error {
 	if err != nil {
 		return fmt.Errorf("Failed to close consumer in kafka")
 	}
+
 	return nil
 }

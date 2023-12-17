@@ -28,13 +28,19 @@ import (
 func TestStudentHandler_Get(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentID:1", RequestType: "/StudentService/GetStudent", Timestamp: time.Now().Round(time.Minute)}
-		topic   = "CRUD_events"
+		request = kafkaEntities.Message{
+			Request:     "studentID:1",
+			RequestType: "/StudentService/GetStudent",
+			Timestamp:   time.Now().Round(time.Minute),
+		}
+		topic = "CRUD_events"
 	)
+
 	zapLogger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to initialize Zap logger: %v\n", err)
 	}
+
 	logger.SetGlobal(zapLogger.With(zap.String("compenent", "compenent")))
 	type mockExpected struct {
 		result serviceEntities.StudentRequest
@@ -63,12 +69,18 @@ func TestStudentHandler_Get(t *testing.T) {
 			},
 		},
 		{
-			description:          "Student exists",
-			mockArguments:        1,
-			mockExpectedEntities: mockExpected{result: serviceEntities.StudentRequest{StudentID: 1, StudentName: "Test", Grade: 90}, error: nil},
-			result:               serviceEntities.StudentRequest{StudentID: 1, StudentName: "Test", Grade: 90},
-			expectedGrpcStatus:   nil,
-			expectedMessage:      &studentProto.StudentGetResponse{Message: "Successfully Got Student"},
+			description:   "Student exists",
+			mockArguments: 1,
+			mockExpectedEntities: mockExpected{
+				result: serviceEntities.StudentRequest{
+					StudentID:   1,
+					StudentName: "Test",
+					Grade:       90,
+				}, error: nil,
+			},
+			result:             serviceEntities.StudentRequest{StudentID: 1, StudentName: "Test", Grade: 90},
+			expectedGrpcStatus: nil,
+			expectedMessage:    &studentProto.StudentGetResponse{Message: "Successfully Got Student"},
 			repoFunc: func(ctrl *gomock.Controller, topic string, request kafkaEntities.Message) kafka.ProducerInterface {
 				m := mock_kafka.NewMockProducerInterface(ctrl)
 				m.EXPECT().SendMessage(topic, request).Return(nil)
@@ -77,6 +89,7 @@ func TestStudentHandler_Get(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.description, func(t *testing.T) {
@@ -88,7 +101,11 @@ func TestStudentHandler_Get(t *testing.T) {
 			grpcServer := grpc.NewServer()
 			studentService := NewStudentServer(mockRepo, mockKafka)
 			studentProto.RegisterStudentServiceServer(grpcServer, studentService)
-			mockRepo.EXPECT().GetByID(gomock.Any(), tc.mockArguments).Return(tc.mockExpectedEntities.result, tc.mockExpectedEntities.error)
+			mockRepo.EXPECT().GetByID(
+				gomock.Any(),
+				tc.mockArguments,
+			).Return(tc.mockExpectedEntities.result, tc.mockExpectedEntities.error)
+
 			defer ctrl.Finish()
 			lis, err := net.Listen("tcp", "localhost:0")
 			require.NoError(t, err)
@@ -112,6 +129,7 @@ func TestStudentHandler_Get(t *testing.T) {
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedGrpcStatus.Code(), statusError.Code())
 				assert.Equal(t, tc.expectedGrpcStatus.Err(), statusError.Err())
+
 				return
 			}
 			assert.Equal(t, tc.expectedMessage.Message, resp.Message)
@@ -125,13 +143,19 @@ func TestStudentHandler_Get(t *testing.T) {
 func TestStudentHandler_Create(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentName:\"Test\"  grade:90", RequestType: "/StudentService/CreateStudent", Timestamp: time.Now().Round(time.Minute)}
-		topic   = "CRUD_events"
+		request = kafkaEntities.Message{
+			Request:     "studentName:\"Test\"  grade:90",
+			RequestType: "/StudentService/CreateStudent",
+			Timestamp:   time.Now().Round(time.Minute),
+		}
+		topic = "CRUD_events"
 	)
+
 	zapLogger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to initialize Zap logger: %v\n", err)
 	}
+
 	logger.SetGlobal(zapLogger.With(zap.String("compenent", "compenent")))
 	type mockExpected struct {
 		result int64
@@ -173,6 +197,7 @@ func TestStudentHandler_Create(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.description, func(t *testing.T) {
@@ -185,7 +210,11 @@ func TestStudentHandler_Create(t *testing.T) {
 			studentService := NewStudentServer(mockRepo, mockKafka)
 			studentProto.RegisterStudentServiceServer(grpcServer, studentService)
 
-			mockRepo.EXPECT().Add(gomock.Any(), tc.mockArguments).Return(tc.mockExpectedEntities.result, tc.mockExpectedEntities.error)
+			mockRepo.EXPECT().Add(
+				gomock.Any(),
+				tc.mockArguments,
+			).Return(tc.mockExpectedEntities.result, tc.mockExpectedEntities.error)
+
 			defer ctrl.Finish()
 			// act
 			lis, err := net.Listen("tcp", "localhost:0")
@@ -202,18 +231,24 @@ func TestStudentHandler_Create(t *testing.T) {
 			defer conn.Close()
 
 			client := studentProto.NewStudentServiceClient(conn)
-			resp, err := client.CreateStudent(context.Background(), &studentProto.StudentCreateRequest{StudentName: tc.mockArguments.StudentName, Grade: tc.mockArguments.Grade})
+			resp, err := client.CreateStudent(
+				context.Background(),
+				&studentProto.StudentCreateRequest{
+					StudentName: tc.mockArguments.StudentName,
+					Grade:       tc.mockArguments.Grade,
+				},
+			)
 			// assert
 			if err != nil {
 				statusError, ok := status.FromError(err)
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedGrpcStatus.Code(), statusError.Code())
+
 				return
 			}
 			assert.Equal(t, tc.expectedMessage.Message, resp.Message)
 			assert.Equal(t, tc.result.StudentName, resp.Student.StudentName)
 			assert.Equal(t, tc.result.Grade, resp.Student.Grade)
-
 		})
 	}
 }
@@ -221,13 +256,19 @@ func TestStudentHandler_Create(t *testing.T) {
 func TestStudentHandler_Delete(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentID:1", RequestType: "/StudentService/DeleteStudent", Timestamp: time.Now().Round(time.Minute)}
-		topic   = "CRUD_events"
+		request = kafkaEntities.Message{
+			Request:     "studentID:1",
+			RequestType: "/StudentService/DeleteStudent",
+			Timestamp:   time.Now().Round(time.Minute),
+		}
+		topic = "CRUD_events"
 	)
+
 	zapLogger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to initialize Zap logger: %v\n", err)
 	}
+
 	logger.SetGlobal(zapLogger.With(zap.String("compenent", "compenent")))
 	tests := []struct {
 		description        string
@@ -238,11 +279,14 @@ func TestStudentHandler_Delete(t *testing.T) {
 		repoFunc           func(*gomock.Controller, string, kafkaEntities.Message) kafka.ProducerInterface
 	}{
 		{
-			description:        "Unable to delete",
-			mockArguments:      4,
-			mockExpectedError:  assert.AnError,
-			expectedGrpcStatus: status.New(codes.Internal, "Failed to delete studentByID: assert.AnError general error for testing"),
-			expectedMessage:    nil,
+			description:       "Unable to delete",
+			mockArguments:     4,
+			mockExpectedError: assert.AnError,
+			expectedGrpcStatus: status.New(
+				codes.Internal,
+				"Failed to delete studentByID: assert.AnError general error for testing",
+			),
+			expectedMessage: nil,
 			repoFunc: func(ctrl *gomock.Controller, topic string, request kafkaEntities.Message) kafka.ProducerInterface {
 				// Return a mock producer without setting any expectations
 				return mock_kafka.NewMockProducerInterface(ctrl)
@@ -273,6 +317,7 @@ func TestStudentHandler_Delete(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.description, func(t *testing.T) {
@@ -300,12 +345,18 @@ func TestStudentHandler_Delete(t *testing.T) {
 			defer conn.Close()
 			client := studentProto.NewStudentServiceClient(conn)
 			// assert
-			resp, err := client.DeleteStudent(context.Background(), &studentProto.StudentDeleteRequest{StudentID: tc.mockArguments})
+			resp, err := client.DeleteStudent(
+				context.Background(),
+				&studentProto.StudentDeleteRequest{
+					StudentID: tc.mockArguments,
+				},
+			)
 			if err != nil {
 				statusError, ok := status.FromError(err)
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedGrpcStatus.Code(), statusError.Code())
 				assert.Equal(t, tc.expectedGrpcStatus.Err(), statusError.Err())
+
 				return
 			}
 			assert.Equal(t, tc.expectedMessage.Message, resp.Message)
@@ -316,13 +367,19 @@ func TestStudentHandler_Delete(t *testing.T) {
 func TestStudentHandler_Update(t *testing.T) {
 	t.Parallel()
 	var (
-		request = kafkaEntities.Message{Request: "studentName:\"Test2\" grade:92", RequestType: "/StudentService/UpdateStudent", Timestamp: time.Now().Round(time.Minute)}
-		topic   = "CRUD_events"
+		request = kafkaEntities.Message{
+			Request:     "studentName:\"Test2\" grade:92",
+			RequestType: "/StudentService/UpdateStudent",
+			Timestamp:   time.Now().Round(time.Minute),
+		}
+		topic = "CRUD_events"
 	)
+
 	zapLogger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatalf("Failed to initialize Zap logger: %v\n", err)
 	}
+
 	logger.SetGlobal(zapLogger.With(zap.String("compenent", "compenent")))
 
 	tests := []struct {
@@ -358,6 +415,7 @@ func TestStudentHandler_Update(t *testing.T) {
 			},
 		},
 	}
+
 	for _, tc := range tests {
 		tc := tc
 		t.Run(tc.description, func(t *testing.T) {
@@ -365,7 +423,11 @@ func TestStudentHandler_Update(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			mockRepo := mock_repository.NewMockStudentPgRepo(ctrl)
 			require.NoError(t, err)
-			request = kafkaEntities.Message{Request: "studentName:\"Test2\" grade:92", RequestType: "/StudentService/UpdateStudent", Timestamp: time.Now().Round(time.Minute)}
+			request = kafkaEntities.Message{
+				Request:     "studentName:\"Test2\" grade:92",
+				RequestType: "/StudentService/UpdateStudent",
+				Timestamp:   time.Now().Round(time.Minute),
+			}
 			mockKafka := tc.repoFunc(ctrl, topic, request)
 			grpcServer := grpc.NewServer()
 			studentService := NewStudentServer(mockRepo, mockKafka)
@@ -380,18 +442,26 @@ func TestStudentHandler_Update(t *testing.T) {
 			}()
 			defer grpcServer.Stop()
 
-			//Create a gRPC client
+			// Create a gRPC client
 			conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
 			require.NoError(t, err)
 			defer conn.Close()
 			client := studentProto.NewStudentServiceClient(conn)
-			resp, err := client.UpdateStudent(context.Background(), &studentProto.StudentUpdateRequest{StudentID: tc.mockArguments.StudentID, StudentName: tc.mockArguments.StudentName, Grade: tc.mockArguments.Grade})
+			resp, err := client.UpdateStudent(
+				context.Background(),
+				&studentProto.StudentUpdateRequest{
+					StudentID:   tc.mockArguments.StudentID,
+					StudentName: tc.mockArguments.StudentName,
+					Grade:       tc.mockArguments.Grade,
+				},
+			)
 			// assert
 			if err != nil {
 				statusError, ok := status.FromError(err)
 				require.True(t, ok)
 				assert.Equal(t, tc.expectedGrpcStatus.Code(), statusError.Code())
 				assert.Equal(t, tc.expectedGrpcStatus.Err(), statusError.Err())
+
 				return
 			}
 			assert.Equal(t, tc.expectedMessage.Message, resp.Message)

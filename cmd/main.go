@@ -29,6 +29,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize Zap logger: %v\n", err)
 	}
+
 	logger.SetGlobal(zapLogger.With(zap.String("component", "main")))
 	// Jagaer configurations
 	cfg := config.Configuration{
@@ -77,7 +78,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf(ctx, "Failed to create Kafka Producer: %v\n", err)
 	}
-	//Creating Kafka Consumer
+	// Create Kafka Consumer
 	consumer, err := kafka.NewKafkaConsumer(brokers, os.Stdout)
 	if err != nil {
 		producer.Close()
@@ -89,6 +90,7 @@ func main() {
 
 	go func() {
 		defer wg.Done()
+
 		if err := consumer.ReadMessages(ctx, topic); err != nil {
 			// Last closing Producer in order to prevent data lost
 			if err := producer.Close(); err != nil {
@@ -98,6 +100,7 @@ func main() {
 			if err := consumer.ConsumerClose(); err != nil {
 				logger.Infof(ctx, "Error closing Kafka Consumer: %v\n", err)
 			}
+
 			logger.Fatalf(ctx, "Closed Consumer: %v\n", err)
 		}
 	}()

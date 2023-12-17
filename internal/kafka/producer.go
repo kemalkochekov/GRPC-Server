@@ -21,12 +21,12 @@ func NewProducer(brokers []string, topic string) (*Producer, error) {
 	config.Producer.Retry.Max = 2
 	// waits message delivered
 	config.Producer.Return.Successes = true
-	fmt.Println(brokers)
 	// Create the Kafka Producer
 	syncProducer, err := sarama.NewSyncProducer(brokers, config)
 	if err != nil {
 		return nil, err
 	}
+
 	return &Producer{
 		syncProducer: syncProducer,
 		topic:        topic,
@@ -38,15 +38,19 @@ func (p *Producer) SendMessage(topic string, kakfaRequestMessage kafkaEntities.M
 	if err != nil {
 		return fmt.Errorf("Failed to Marshal message")
 	}
+
 	msg := &sarama.ProducerMessage{
 		Topic: topic,
 		Value: sarama.StringEncoder(messageBytes),
 	}
+
 	partition, offset, err := p.syncProducer.SendMessage(msg)
-	fmt.Println("Partition: ", partition, " Offset: ", offset, " AnswerID:", kakfaRequestMessage.RequestType)
 	if err != nil {
 		return fmt.Errorf("Failed to send message")
 	}
+
+	fmt.Println("Partition: ", partition, " Offset: ", offset, " AnswerID:", kakfaRequestMessage.RequestType)
+
 	return nil
 }
 
@@ -55,6 +59,7 @@ func (p *Producer) Close() error {
 	if err != nil {
 		return fmt.Errorf("Failed to close producer in kafka")
 	}
+
 	return nil
 }
 func (p *Producer) Topic() string {

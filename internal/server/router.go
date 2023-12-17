@@ -19,15 +19,21 @@ func logError(ctx context.Context, span opentracing.Span, err error, message str
 	span.SetTag("error", true)
 	span.LogFields(log.Error(err))
 }
-func StartGRPCServer(studentStorage repository.StudentPgRepo, classInfoStorage repository.ClassInfoPgRepo, producer kafka.ProducerInterface, grpcPort string) error {
-
+func StartGRPCServer(
+	studentStorage repository.StudentPgRepo,
+	classInfoStorage repository.ClassInfoPgRepo,
+	producer kafka.ProducerInterface,
+	grpcPort string,
+) error {
 	lis, err := net.Listen("tcp", grpcPort)
 	if err != nil {
 		return err
 	}
+
 	grpcServer := grpc.NewServer()
 	studentService := NewStudentServer(studentStorage, producer)
 	classInfoService := NewClassInfoServer(classInfoStorage, producer)
+
 	studentProto.RegisterStudentServiceServer(grpcServer, studentService)
 	classInfoProto.RegisterClassInfoServiceServer(grpcServer, classInfoService)
 
